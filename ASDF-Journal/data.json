@@ -1,11 +1,7 @@
 {
-    "journal_dir": "C:/Users/rohit/Documents/example journal",
-    "page_zoom": 2.000000014901161,
-    "splitter_sizes": [
-        637,
-        1593,
-        1592
-    ],
+    "journal_dir": "",
+    "page_zoom": 1,
+    "splitter_sizes": [],
     "toggle_selector": true,
     "toggle_editor": true,
     "toggle_preview": true,
