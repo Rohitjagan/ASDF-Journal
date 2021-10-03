@@ -25,7 +25,7 @@ def main():
             json.dump(data_json, data_file, indent=4)
 
     app = QApplication([])
-    app.setWindowIcon(QIcon("Resources/Icons/journal-icon.png"))
+    app.setWindowIcon(QIcon(os.path.join(Utilities.get_directory(), "Resources", "Icons", "journal-icon.png")))
     app.setStyle("Fusion")
 
     interface = MainInterface()
