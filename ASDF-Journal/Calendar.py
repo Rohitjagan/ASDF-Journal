@@ -18,6 +18,7 @@ class Calendar(QCalendarWidget):
     def __init__(self, parent = None):
         super(Calendar, self).__init__(parent)
         self.setWindowFlags(self.windowFlags() | Qt.Window)
+        self.setWindowTitle("Calendar")
         self.setSelectionMode(QCalendarWidget.SelectionMode.SingleSelection)
 
         for weekend in (Qt.DayOfWeek.Sunday, Qt.DayOfWeek.Saturday):
