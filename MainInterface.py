@@ -26,7 +26,7 @@ class MainInterface(QMainWindow):
 
     def __init__(self):
         super(MainInterface, self).__init__()
-        self.setWindowTitle("Journal")
+        self.setWindowTitle("ASDF Journal")
         self.splitter = QSplitter(self)
 
         self.entry_selector = EntrySelector(self)
@@ -313,7 +313,7 @@ class MainInterface(QMainWindow):
         :return: None
         """
         self.entry_selector.update_entry_selector()
-        self.setWindowTitle("Journal - " + os.path.basename(Utilities.get_journal_dir()))
+        self.setWindowTitle("ASDF Journal - " + os.path.basename(Utilities.get_journal_dir()))
         self.calendar.highlight_dates_with_entries(self.entry_selector.get_all_entries())
 
     def toggle_calendar(self, checked: bool) -> None:
