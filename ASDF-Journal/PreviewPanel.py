@@ -19,7 +19,10 @@ class PreviewPanel(QWebEngineView):
         self.html_code = ""
         self.placeholder_path = None
         self.init_html()
-        self.markdown = markdown.Markdown(extensions=["extra"])
+        self.markdown = markdown.Markdown(
+            extensions=["markdown.extensions.abbr", "markdown.extensions.attr_list", "markdown.extensions.def_list",
+                        "markdown.extensions.fenced_code", "markdown.extensions.footnotes",
+                        "markdown.extensions.md_in_html", "markdown.extensions.tables"])
         self.setHtml(self.html_code.format(""), self.placeholder_path)
         if Utilities.get_page_zoom():
             self.page().setZoomFactor(Utilities.get_page_zoom())
