@@ -11,3 +11,9 @@ A simple journal which uses markdown formatting
 
 ### Live HTML Preview
 
+![screenshot](Screenshots/Screenshot1.png)
+See your entries rendered in html side by side with the editor
+
+### Calendar
+
+![screenshot](Screenshots/Screenshot2.png)
