@@ -10,3 +10,4 @@ A simple journal which uses markdown formatting
 * Plaintext files will likely be readable for a long time while other propietary formats can become obsolete
 
 ### Live HTML Preview
+
