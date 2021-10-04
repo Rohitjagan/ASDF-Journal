@@ -7,7 +7,7 @@ from typing import List
 
 from PyQt5.QtCore import QDate, Qt, pyqtSignal
 from PyQt5.QtGui import QTextCharFormat, QCloseEvent
-from PyQt5.QtWidgets import QCalendarWidget
+from PyQt5.QtWidgets import QCalendarWidget, QDesktopWidget
 
 import Utilities
 
@@ -20,6 +20,9 @@ class Calendar(QCalendarWidget):
         self.setWindowFlags(self.windowFlags() | Qt.Window)
         self.setWindowTitle("Calendar")
         self.setSelectionMode(QCalendarWidget.SelectionMode.SingleSelection)
+
+        desktop = QDesktopWidget()
+        self.resize(desktop.availableGeometry().size().width() * 0.5, desktop.availableGeometry().size().height() * 0.5)
 
         for weekend in (Qt.DayOfWeek.Sunday, Qt.DayOfWeek.Saturday):
             self.setWeekdayTextFormat(weekend, self.weekdayTextFormat(Qt.DayOfWeek.Wednesday))
