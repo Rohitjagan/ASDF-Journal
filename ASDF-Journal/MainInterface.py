@@ -286,22 +286,19 @@ class MainInterface(QMainWindow):
     def exit_interface(self) -> None:
         self.close()
 
-    def toggle_entry_selector(self, checked: bool, action: QAction) -> None:
-        action.setChecked(checked)
+    def toggle_entry_selector(self, checked: bool) -> None:
         if checked:
             self.entry_selector.show()
         else:
             self.entry_selector.hide()
 
-    def toggle_markdown_editor(self, checked: bool, action: QAction) -> None:
-        action.setChecked(checked)
+    def toggle_markdown_editor(self, checked: bool) -> None:
         if checked:
             self.markdown_editor.show()
         else:
             self.markdown_editor.hide()
 
-    def toggle_preview_panel(self, checked: bool, action: QAction) -> None:
-        action.setChecked(checked)
+    def toggle_preview_panel(self, checked: bool) -> None:
         if checked:
             self.preview_panel.show()
         else:
