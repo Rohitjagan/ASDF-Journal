@@ -79,8 +79,9 @@ class MarkdownEditor(QTextEdit):
         """
         if e.text() == "\t":
             cursor = self.textCursor()
-            cursor.select(QTextCursor.SelectionType.LineUnderCursor)
-            last_line = cursor.selectedText()
+            # cursor.select(QTextCursor.SelectionType.LineUnderCursor)
+            # last_line = cursor.selectedText()
+            last_line = cursor.block().text()
             last_line_strip = last_line.strip()
             if last_line_strip and (last_line_strip in ("*", "-", "+")) or (
                     last_line_strip[0:-1].isnumeric() and last_line_strip[-1] in (".", ")")):
@@ -92,8 +93,9 @@ class MarkdownEditor(QTextEdit):
                 return
         elif e.key() == Qt.Key_Return:
             cursor = self.textCursor()
-            cursor.select(QTextCursor.SelectionType.LineUnderCursor)
-            last_line = cursor.selectedText()
+            # cursor.select(QTextCursor.SelectionType.LineUnderCursor)
+            # last_line = cursor.selectedText()
+            last_line = cursor.block().text()
             last_line_lstrip = last_line.lstrip()
             for marker in ("- [ ]", "*", "-", "+", ">"):
                 if last_line_lstrip and last_line_lstrip.startswith(marker + " "):
