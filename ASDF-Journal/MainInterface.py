@@ -383,9 +383,8 @@ class MainInterface(QMainWindow):
                 with open(path_to_entry) as entry:
                     if entry.read() != self.markdown_editor.toPlainText():
                         reply = QMessageBox.question(self, "Save Changes",
-                                                     "Your changes have not been saved. Are you sure you want to exit?",
+                                                     "Would you like to save your changes?",
                                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-                        if reply == QMessageBox.No:
-                            event.ignore()
-                            return
+                        if reply == QMessageBox.Yes:
+                            self.save_entry()
         event.accept()
