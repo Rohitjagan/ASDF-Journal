@@ -13,7 +13,7 @@ from typing import List
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QKeySequence, QCloseEvent, QIcon, QResizeEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QMenuBar, QMenu, QAction, QSplitter, QFileDialog, \
-    QInputDialog, QMessageBox, QShortcut, QSizePolicy
+    QInputDialog, QMessageBox, QShortcut, QSizePolicy, QListWidgetItem
 
 import Utilities
 from Calendar import Calendar
@@ -63,7 +63,7 @@ class MainInterface(QMainWindow):
         self.nav_down_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(False))
 
         self.setup_connections()
-        self.markdown_editor.update_editor(self.entry_selector.selectedItems())
+        self.markdown_editor.update_editor(self.entry_selector.currentItem())
 
         # For updating the preview panel
         self.update_timer = QTimer(self)
@@ -170,9 +170,11 @@ class MainInterface(QMainWindow):
         Initializes connections between widgets
         :return: None
         """
-        self.entry_selector.itemSelectionChanged.connect(
-            lambda: self.markdown_editor.update_editor(self.entry_selector.selectedItems()))
-        self.entry_selector.itemSelectionChanged.connect(lambda: self.timer_updated())
+
+        self.entry_selector.currentItemChanged.connect(self.confirm_save)
+        self.entry_selector.currentItemChanged.connect(
+            lambda: self.markdown_editor.update_editor(self.entry_selector.currentItem()))
+        self.entry_selector.currentItemChanged.connect(lambda: self.timer_updated())
         self.markdown_editor.update_selector.connect(self.update_selector)
         self.calendar.selectionChanged.connect(
             lambda: self.entry_selector.calendar_date_changed(self.calendar.selectedDate()))
@@ -357,6 +359,32 @@ class MainInterface(QMainWindow):
             self.preview_panel.update_preview(text, self.markdown_editor.textCursor().atEnd())
             self.markdown_editor.set_has_text_changed(False)
 
+    def confirm_save(self, current: QListWidgetItem = None, previous: QListWidgetItem = None) -> bool:
+        """
+        Asks the user if they want to save before switching entries or exiting app
+        :param current: new selected item; from signal, not used
+        :param previous: previously selected item
+        :return: True if the user does not press cancel
+        """
+        if self.entry_selector.currentItem():
+            if previous:
+                path_to_entry = os.path.join(Utilities.get_entries_dir(), previous.text())
+            else:
+                path_to_entry = os.path.join(Utilities.get_entries_dir(), self.entry_selector.currentItem().text())
+            if os.path.isfile(path_to_entry):
+                with open(path_to_entry) as entry:
+                    if entry.read() != self.markdown_editor.toPlainText():
+                        reply = QMessageBox.question(self, "Save Changes",
+                                                     "Would you like to save your changes?",
+                                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                        if reply == QMessageBox.Yes:
+                            with open(path_to_entry, 'w') as entry_file:
+                                entry_file.write(self.markdown_editor.toPlainText())
+                        if reply == QMessageBox.StandardButton.Cancel:
+                            return False
+
+        return True
+
     def resizeEvent(self, event: QResizeEvent) -> None:
         """
         Overrides the resizeEvent method in order to update the bottom margin of the editor (so that the user can scroll
@@ -365,7 +393,11 @@ class MainInterface(QMainWindow):
         :return: None
         """
         self.markdown_editor.update_margin(self.splitter.height())
-        event.accept()
+
+        if self.confirm_save():
+            event.accept()
+        else:
+            event.ignore()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -377,14 +409,5 @@ class MainInterface(QMainWindow):
         Utilities.set_splitter_sizes(self.splitter.sizes())
         Utilities.set_toggle_states([not self.entry_selector.isHidden(), not self.markdown_editor.isHidden(),
                                      not self.preview_panel.isHidden()])
-        if self.entry_selector.currentItem():
-            path_to_entry = os.path.join(Utilities.get_entries_dir(), self.entry_selector.currentItem().text())
-            if os.path.isfile(path_to_entry):
-                with open(path_to_entry) as entry:
-                    if entry.read() != self.markdown_editor.toPlainText():
-                        reply = QMessageBox.question(self, "Save Changes",
-                                                     "Would you like to save your changes?",
-                                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
-                        if reply == QMessageBox.Yes:
-                            self.save_entry()
+
         event.accept()
