@@ -359,18 +359,15 @@ class MainInterface(QMainWindow):
             self.preview_panel.update_preview(text, self.markdown_editor.textCursor().atEnd())
             self.markdown_editor.set_has_text_changed(False)
 
-    def confirm_save(self, current: QListWidgetItem = None, previous: QListWidgetItem = None) -> bool:
+    def confirm_save(self, current: QListWidgetItem = None, item: QListWidgetItem = None) -> bool:
         """
         Asks the user if they want to save before switching entries or exiting app
-        :param current: new selected item; from signal, not used
-        :param previous: previously selected item
+        :param current: part of the signal; not used
+        :param item: the entry selector item to save to
         :return: True if the user does not press cancel
         """
-        if self.entry_selector.currentItem():
-            if previous:
-                path_to_entry = os.path.join(Utilities.get_entries_dir(), previous.text())
-            else:
-                path_to_entry = os.path.join(Utilities.get_entries_dir(), self.entry_selector.currentItem().text())
+        if item:
+            path_to_entry = os.path.join(Utilities.get_entries_dir(), item.text())
             if os.path.isfile(path_to_entry):
                 with open(path_to_entry) as entry:
                     if entry.read() != self.markdown_editor.toPlainText():
@@ -394,10 +391,7 @@ class MainInterface(QMainWindow):
         """
         self.markdown_editor.update_margin(self.splitter.height())
 
-        if self.confirm_save():
-            event.accept()
-        else:
-            event.ignore()
+        event.accept()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -409,5 +403,7 @@ class MainInterface(QMainWindow):
         Utilities.set_splitter_sizes(self.splitter.sizes())
         Utilities.set_toggle_states([not self.entry_selector.isHidden(), not self.markdown_editor.isHidden(),
                                      not self.preview_panel.isHidden()])
+
+        self.confirm_save(item=self.entry_selector.currentItem())
 
         event.accept()
