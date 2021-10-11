@@ -23,6 +23,7 @@ See which days have at least one entry and select a day to view that entry
 
 * Add attachments to your entries
   * Attachments are also timestamped with YYYY-MM-DD_HHMM
+  * Attachments are stored in a single folder and can be easily linked from multiple entries
 * Export your journal as a single markdown file
 * Supports extra markdown features such as tables and footnotes
 
@@ -32,6 +33,7 @@ See which days have at least one entry and select a day to view that entry
 
 * Download the zip file from the latest [release](https://github.com/Rohitjagan/ASDF-Journal/releases)
 * Unzip and run the executable
+* *ASDF-Journal* can be used as a portable application
 
 ### Linux & macOs
 
