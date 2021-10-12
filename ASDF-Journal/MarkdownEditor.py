@@ -20,6 +20,7 @@ class MarkdownEditor(QTextEdit):
         self.frame_format = self.document().rootFrame().frameFormat()
         self.has_text_changed = False
         self.font = QFont()
+        self.font.setFamily("Consolas")
         self.font.setPointSize(Utilities.get_editor_font_size())
         self.setFont(self.font)
         self.init_frame_format()
@@ -27,6 +28,8 @@ class MarkdownEditor(QTextEdit):
         self.setAcceptRichText(False)
 
         self.textChanged.connect(lambda: self.set_has_text_changed(True))
+
+        # TODO add bold and italics shortcuts
 
     def get_has_text_changed(self) -> bool:
         return self.has_text_changed
