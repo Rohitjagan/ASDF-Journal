@@ -251,9 +251,10 @@ class MainInterface(QMainWindow):
             if title:
                 entry_name += " " + title
             entry_name_file = Utilities.replace_chars_for_file(entry_name) + ".md"
-            with open(os.path.join(entries_dir, entry_name_file), 'x') as entry:
+            with open(os.path.join(entries_dir, entry_name_file), 'a') as entry:
                 entry.writelines(["# " + entry_name + "\n"])
             self.update_selector()
+            self.timer_updated()
 
     def import_attachments(self) -> None:
         """
