@@ -253,7 +253,7 @@ class MainInterface(QMainWindow):
             entry_name_file = Utilities.replace_chars_for_file(entry_name) + ".md"
             with open(os.path.join(entries_dir, entry_name_file), 'a') as entry:
                 entry.writelines(["# " + entry_name + "\n"])
-            # self.update_selector()
+            self.update_selector()
             self.timer_updated()
 
     def import_attachments(self) -> None:
@@ -261,7 +261,7 @@ class MainInterface(QMainWindow):
         Adds a new attachment to the attachments folder and links it the entry
         :return: None
         """
-        selected_files = QFileDialog.getOpenFileNames(self, "Select attachments to import")
+        selected_files = QFileDialog.getOpenFileNames(self, "Select attachments to import", Utilities.get_journal_dir())
         if selected_files:
             for selected_file in selected_files[0]:
                 cur_datetime = datetime.now()
@@ -272,6 +272,10 @@ class MainInterface(QMainWindow):
                 insert_text = "!" if os.path.splitext(file_name)[1].lower() in (".jpg", ".jpeg", ".png", ".gif") else ""
                 insert_text += "[](../attachments/" + file_name + ") "
                 self.markdown_editor.insertPlainText(insert_text)
+
+                # deletes the original file if it was in the attachments folder
+                if os.path.abspath(os.path.dirname(selected_file)) == os.path.abspath(Utilities.get_attachments_dir()):
+                    os.remove(selected_file)
 
     def add_existing_attachments(self) -> None:
         """
