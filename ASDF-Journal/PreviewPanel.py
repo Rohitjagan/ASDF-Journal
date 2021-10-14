@@ -5,7 +5,7 @@ Preview panel that renders the markdown code in the editor
 import os
 
 import markdown
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, Qt
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 
@@ -16,6 +16,7 @@ class PreviewPanel(QWebEngineView):
     def __init__(self, parent):
         super(PreviewPanel, self).__init__(parent)
         self.setPage(WebEnginePage(self))
+        self.setContextMenuPolicy(Qt.NoContextMenu)
         self.html_code = ""
         self.placeholder_path = None
         self.init_html()
