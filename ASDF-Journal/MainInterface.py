@@ -229,7 +229,7 @@ class MainInterface(QMainWindow):
             path_to_entry = os.path.join(Utilities.get_entries_dir(), self.entry_selector.selectedItems()[0].text())
             if os.path.isfile(path_to_entry):
                 with open(os.path.join(Utilities.get_entries_dir(), self.entry_selector.selectedItems()[0].text()),
-                          "w") as entry:
+                          "w", encoding="utf8") as entry:
                     entry.write(self.markdown_editor.toPlainText())
             else:
                 Utilities.alert_user("Selected entry does not exist.")
@@ -251,7 +251,7 @@ class MainInterface(QMainWindow):
             if title:
                 entry_name += " " + title
             entry_name_file = Utilities.replace_chars_for_file(entry_name) + ".md"
-            with open(os.path.join(entries_dir, entry_name_file), 'a') as entry:
+            with open(os.path.join(entries_dir, entry_name_file), 'a', encoding="utf8") as entry:
                 entry.writelines(["# " + entry_name + "\n"])
             self.update_selector()
             self.timer_updated()
@@ -345,9 +345,9 @@ class MainInterface(QMainWindow):
         attachments_path = os.path.join(export_path, os.path.basename(Utilities.get_journal_dir()), "attachments")
         os.makedirs(export_file_path, exist_ok=True)
         os.makedirs(attachments_path, exist_ok=True)
-        with open(os.path.join(export_file_path, "combined_journal.md"), 'w') as export_file:
+        with open(os.path.join(export_file_path, "combined_journal.md"), 'w', encoding="utf8") as export_file:
             for entry in entries:
-                with open(os.path.join(Utilities.get_entries_dir(), entry), 'r') as entry_file:
+                with open(os.path.join(Utilities.get_entries_dir(), entry), 'r', encoding="utf8") as entry_file:
                     lines = entry_file.readlines()
                 export_file.write(seperator)
                 export_file.writelines(lines)
@@ -374,13 +374,13 @@ class MainInterface(QMainWindow):
         if item:
             path_to_entry = os.path.join(Utilities.get_entries_dir(), item.text())
             if os.path.isfile(path_to_entry):
-                with open(path_to_entry) as entry:
+                with open(path_to_entry, 'r', encoding="utf8") as entry:
                     if entry.read() != self.markdown_editor.toPlainText():
                         reply = QMessageBox.question(self, "Save Changes",
                                                      "Would you like to save your changes?",
                                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                         if reply == QMessageBox.Yes:
-                            with open(path_to_entry, 'w') as entry_file:
+                            with open(path_to_entry, 'w', encoding="utf8") as entry_file:
                                 entry_file.write(self.markdown_editor.toPlainText())
                         if reply == QMessageBox.StandardButton.Cancel:
                             return False

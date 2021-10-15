@@ -50,7 +50,7 @@ class MarkdownEditor(QTextEdit):
         if current:
             path_to_entry = os.path.join(Utilities.get_entries_dir(), current.text())
             if os.path.isfile(path_to_entry):
-                with open(path_to_entry) as current_entry:
+                with open(path_to_entry, encoding="utf8") as current_entry:
                     self.setPlainText(current_entry.read())
             else:
                 Utilities.alert_user("Selected entry does not exist.")
