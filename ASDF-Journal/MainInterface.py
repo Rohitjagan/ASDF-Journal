@@ -88,12 +88,12 @@ class MainInterface(QMainWindow):
         self.menu_bar.addMenu(file_menu)
 
         edit_menu = QMenu("&Edit", self)
-        import_attachments_action = self.create_menu_action("&Import Attachments", self.import_attachments, "Ctrl+I",
+        import_attachments_action = self.create_menu_action("&Import Attachments", self.import_attachments, "Ctrl+D",
                                                             icon="import.svg")
         edit_menu.addAction(import_attachments_action)
         self.toolbar.addAction(import_attachments_action)
         existing_attachments_action = self.create_menu_action("Add Existing Attachment", self.add_existing_attachments,
-                                                              "Ctrl+Shift+I", icon="attachments.svg")
+                                                              "Ctrl+Shift+D", icon="attachments.svg")
         edit_menu.addAction(existing_attachments_action)
         self.toolbar.addAction(existing_attachments_action)
         self.menu_bar.addMenu(edit_menu)

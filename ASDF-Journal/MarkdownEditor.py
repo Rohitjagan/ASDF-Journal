@@ -6,8 +6,8 @@ import os
 from typing import List
 
 from PyQt5.QtCore import Qt, QRegularExpression, pyqtSignal
-from PyQt5.QtGui import QTextCursor, QFont, QSyntaxHighlighter, QTextDocument, QTextCharFormat, QKeyEvent
-from PyQt5.QtWidgets import QTextEdit, QListWidgetItem
+from PyQt5.QtGui import QTextCursor, QFont, QSyntaxHighlighter, QTextDocument, QTextCharFormat, QKeyEvent, QKeySequence
+from PyQt5.QtWidgets import QTextEdit, QListWidgetItem, QShortcut
 
 import Utilities
 
@@ -29,7 +29,11 @@ class MarkdownEditor(QTextEdit):
 
         self.textChanged.connect(lambda: self.set_has_text_changed(True))
 
-        # TODO add bold and italics shortcuts
+        # Shortcuts
+        self.bold_shortcut = QShortcut(QKeySequence("Ctrl+B"), self)
+        self.bold_shortcut.activated.connect(lambda: self.emphasize_selected_text("**"))
+        self.italics_shortcut = QShortcut(QKeySequence("Ctrl+I"), self)
+        self.italics_shortcut.activated.connect(lambda: self.emphasize_selected_text("*"))
 
     def get_has_text_changed(self) -> bool:
         return self.has_text_changed
@@ -73,6 +77,28 @@ class MarkdownEditor(QTextEdit):
         """
         self.frame_format.setBottomMargin(height)
         self.document().rootFrame().setFrameFormat(self.frame_format)
+
+    def emphasize_selected_text(self, emphasis_text: str) -> None:
+        """
+        adds emphasis to selected text (italics or bold)
+        :param emphasis_text: the text to be inserted before and after the selected text
+        :return: None
+        """
+        cursor1 = self.textCursor()
+        cursor2 = self.textCursor()
+
+        cursor1.setPosition(min(cursor1.position(), cursor1.anchor()))
+        cursor2.setPosition(max(cursor2.position(), cursor2.anchor()))
+
+        cursor1.insertText(emphasis_text)
+        pos1 = cursor1.position()
+        cursor2.setKeepPositionOnInsert(True)
+        cursor2.insertText(emphasis_text)
+        cursor1.setPosition(pos1)           # keepPositionOnInsert doesn't work
+        cursor1.setPosition(cursor2.position(), QTextCursor.MoveMode.KeepAnchor)
+        cursor1.setKeepPositionOnInsert(False)
+        self.setTextCursor(cursor1)
+
 
     def keyPressEvent(self, e: QKeyEvent) -> None:
         """
