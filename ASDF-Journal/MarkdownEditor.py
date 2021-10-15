@@ -128,8 +128,13 @@ class MarkdownEditor(QTextEdit):
             last_line_lstrip = last_line.lstrip()
             for marker in ("- [ ]", "*", "-", "+", ">"):
                 if last_line_lstrip and last_line_lstrip.startswith(marker + " "):
-                    to_insert = "\n" + last_line[0:last_line.index(marker)] + marker + " "
-                    self.insertPlainText(to_insert)
+                    if marker != ">" and len(last_line_lstrip) <= (len(marker) + 1):   # clear empty element
+                        cursor.select(QTextCursor.BlockUnderCursor)
+                        cursor.removeSelectedText()
+                        cursor.insertBlock()
+                    else:
+                        to_insert = "\n" + last_line[0:last_line.index(marker)] + marker + " "
+                        self.insertPlainText(to_insert)
                     return
             for num_marker in (".", ")"):
                 if num_marker in last_line_lstrip and last_line_lstrip[
