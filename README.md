@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="300" src="ASDF-Journal\Resources\Icons\journal-icon.png">
+</p>
+
 # ASDF Journal
 A simple journal which uses markdown formatting
 
