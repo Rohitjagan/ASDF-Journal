@@ -7,9 +7,9 @@ import os
 from datetime import datetime
 from typing import List
 
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt, QPoint
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QListWidget, QAbstractItemView
+from PyQt5.QtWidgets import QListWidget, QAbstractItemView, QMenu, QAction, QListWidgetItem, QInputDialog
 
 import Utilities
 
@@ -22,6 +22,35 @@ class EntrySelector(QListWidget):
         font.setFamily("Verdana")
         font.setPointSize(14)
         self.setFont(font)
+
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showContextMenu)
+
+    def showContextMenu(self, pos: QPoint) -> None:
+        global_pos = self.mapToGlobal(pos)
+
+        context_menu = QMenu(self)
+
+        rename_action = QAction("Rename", self)
+        rename_action.triggered.connect(lambda: self.rename_entry(self.currentItem()))
+        delete_action = QAction("Delete", self)
+        delete_action.triggered.connect(self.delete_current_entry)
+        context_menu.addAction(rename_action)
+        context_menu.addAction(delete_action)
+
+        context_menu.exec(global_pos)
+
+    def rename_entry(self, entry: QListWidgetItem) -> None:
+        name, confirm = QInputDialog.getText(self, "Rename Entry", "Title:", text=entry.text())
+
+        if confirm:
+            os.rename(os.path.join(Utilities.get_entries_dir(), entry.text()),
+                      os.path.join(Utilities.get_entries_dir(), name))
+            entry.setText(name)
+
+    def delete_current_entry(self) -> None:
+        os.remove(os.path.join(Utilities.get_entries_dir(), self.currentItem().text()))
+        self.takeItem(self.currentRow())
 
     def update_entry_selector(self) -> None:
         """
