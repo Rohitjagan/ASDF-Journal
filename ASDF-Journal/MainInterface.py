@@ -56,11 +56,11 @@ class MainInterface(QMainWindow):
         self.toolbar.setFloatable(False)
         self.create_menu()
 
-        # Create Shortcuts
-        self.nav_up_shortcut = QShortcut(QKeySequence("Alt+Up"), self)
-        self.nav_up_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(True))
-        self.nav_down_shortcut = QShortcut(QKeySequence("Alt+Down"), self)
-        self.nav_down_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(False))
+        # # Create Shortcuts
+        # self.nav_up_shortcut = QShortcut(QKeySequence("Alt+Up"), self)
+        # self.nav_up_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(True))
+        # self.nav_down_shortcut = QShortcut(QKeySequence("Alt+Down"), self)
+        # self.nav_down_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(False))
 
         self.setup_connections()
         self.markdown_editor.update_editor(self.entry_selector.current_entry_path())
@@ -101,6 +101,11 @@ class MainInterface(QMainWindow):
         spacerL = QWidget()
         spacerL.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.toolbar.addWidget(spacerL)
+
+        self.toolbar.addAction(self.create_menu_action("Next Entry", lambda: self.entry_selector.navigate_direction(False), "Alt+Down", icon="down.svg"))
+        self.toolbar.addAction(self.create_menu_action("Previous Entry", lambda: self.entry_selector.navigate_direction(True), "Alt+Up", icon="up.svg"))
+
+        self.toolbar.addSeparator()
 
         view_menu = QMenu("&View", self)
         toggle_selector_action = self.create_menu_action("Entry Selector", self.toggle_entry_selector, "Ctrl+1",
@@ -161,6 +166,7 @@ class MainInterface(QMainWindow):
             action.triggered.connect(function)
         if shortcut:
             action.setShortcut(shortcut)
+            action.setToolTip("{name} ({shortcut})".format(name=name.replace("&",""), shortcut=shortcut))
         if icon:
             action.setIcon(QIcon(os.path.join(Utilities.get_resources_dir(), "Icons", icon)))
         return action
