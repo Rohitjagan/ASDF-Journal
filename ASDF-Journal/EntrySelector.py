@@ -32,7 +32,7 @@ class EntrySelector(QListWidget):
         context_menu = QMenu(self)
 
         rename_action = QAction("Rename", self)
-        rename_action.triggered.connect(lambda: self.rename_entry(self.currentItem()))
+        rename_action.triggered.connect(lambda: self.rename_entry(self.current_entry_path()))
         delete_action = QAction("Delete", self)
         delete_action.triggered.connect(self.delete_current_entry)
         context_menu.addAction(rename_action)
@@ -40,13 +40,12 @@ class EntrySelector(QListWidget):
 
         context_menu.exec(global_pos)
 
-    def rename_entry(self, entry: QListWidgetItem) -> None:
-        name, confirm = QInputDialog.getText(self, "Rename Entry", "", text=entry.text())
+    def rename_entry(self, entry_path: str) -> None:
+        name, confirm = QInputDialog.getText(self, "Rename Entry", "", text=os.path.splitext(os.path.basename(entry_path))[0])
 
         if confirm:
-            os.rename(os.path.join(Utilities.get_entries_dir(), entry.text()),
-                      os.path.join(Utilities.get_entries_dir(), name))
-            entry.setText(name)
+            os.rename(entry_path, os.path.join(os.path.dirname(entry_path), name) + ".md")
+            self.update_entry_selector()
 
     def delete_current_entry(self) -> None:
         os.remove(os.path.join(Utilities.get_entries_dir(), self.currentItem().text()))
