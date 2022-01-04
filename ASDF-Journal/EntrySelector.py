@@ -41,7 +41,7 @@ class EntrySelector(QListWidget):
         context_menu.exec(global_pos)
 
     def rename_entry(self, entry: QListWidgetItem) -> None:
-        name, confirm = QInputDialog.getText(self, "Rename Entry", "Title:", text=entry.text())
+        name, confirm = QInputDialog.getText(self, "Rename Entry", "", text=entry.text())
 
         if confirm:
             os.rename(os.path.join(Utilities.get_entries_dir(), entry.text()),
@@ -68,10 +68,17 @@ class EntrySelector(QListWidget):
             return
 
         for entry in sorted(glob.glob(os.path.join(entries_dir, "*.md")), reverse=True):
-            self.addItem(os.path.basename(entry))
+
+            entry_item = QListWidgetItem(self)
+            entry_item.setText(os.path.splitext(os.path.basename(entry))[0].replace("_", " "))
+            entry_item.setData(Qt.UserRole, entry)
+            self.addItem(entry_item)
 
         if self.count():
             self.setCurrentRow(0)
+
+    def current_entry_path(self):
+        return self.currentItem().data(Qt.UserRole) if self.currentItem() else ""
 
     def navigate_direction(self, direction_up: bool) -> None:
         """
@@ -94,7 +101,7 @@ class EntrySelector(QListWidget):
             entries.append(os.path.basename(entry))
         return entries
 
-    def calendar_date_changed(self, date: QDate) -> None:
+    def set_entry_date(self, date: QDate) -> None:
         """
         Opens the entry selected from the calendar
         :param date: The date selected in the calendar

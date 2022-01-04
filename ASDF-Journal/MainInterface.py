@@ -63,7 +63,7 @@ class MainInterface(QMainWindow):
         self.nav_down_shortcut.activated.connect(lambda: self.entry_selector.navigate_direction(False))
 
         self.setup_connections()
-        self.markdown_editor.update_editor(self.entry_selector.currentItem())
+        self.markdown_editor.update_editor(self.entry_selector.current_entry_path())
 
         # For updating the preview panel
         self.update_timer = QTimer(self)
@@ -173,11 +173,11 @@ class MainInterface(QMainWindow):
 
         self.entry_selector.currentItemChanged.connect(self.confirm_save)
         self.entry_selector.currentItemChanged.connect(
-            lambda: self.markdown_editor.update_editor(self.entry_selector.currentItem()))
+            lambda: self.markdown_editor.update_editor(self.entry_selector.current_entry_path()))
         self.entry_selector.currentItemChanged.connect(lambda: self.timer_updated())
         self.markdown_editor.update_selector.connect(self.update_selector)
         self.calendar.selectionChanged.connect(
-            lambda: self.entry_selector.calendar_date_changed(self.calendar.selectedDate()))
+            lambda: self.entry_selector.set_entry_date(self.calendar.selectedDate()))
         self.calendar.closed.connect(lambda: self.toggle_calendar(False))
 
     def open_journal(self) -> None:
@@ -226,9 +226,9 @@ class MainInterface(QMainWindow):
         :return: None
         """
         if len(self.entry_selector.selectedItems()) > 0:
-            path_to_entry = os.path.join(Utilities.get_entries_dir(), self.entry_selector.selectedItems()[0].text())
+            path_to_entry = self.entry_selector.current_entry_path()
             if os.path.isfile(path_to_entry):
-                with open(os.path.join(Utilities.get_entries_dir(), self.entry_selector.selectedItems()[0].text()),
+                with open(path_to_entry,
                           "w", encoding="utf8") as entry:
                     entry.write(self.markdown_editor.toPlainText())
             else:

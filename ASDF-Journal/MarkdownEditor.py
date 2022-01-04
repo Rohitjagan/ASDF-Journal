@@ -41,14 +41,13 @@ class MarkdownEditor(QTextEdit):
     def set_has_text_changed(self, val: bool) -> None:
         self.has_text_changed = val
 
-    def update_editor(self, current: QListWidgetItem) -> None:
+    def update_editor(self, path_to_entry: str) -> None:
         """
         Executes when a new entry is opened; Sets text to that entry
-        :param selections: The current selected entry
+        :param path_to_entry: The path to the current selected entry
         :return: None
         """
-        if current:
-            path_to_entry = os.path.join(Utilities.get_entries_dir(), current.text())
+        if path_to_entry:
             if os.path.isfile(path_to_entry):
                 with open(path_to_entry, encoding="utf8") as current_entry:
                     self.setPlainText(current_entry.read())
