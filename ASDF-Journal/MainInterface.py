@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 from typing import List
 
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QKeySequence, QCloseEvent, QIcon, QResizeEvent
 from PyQt5.QtWidgets import QMainWindow, QWidget, QMenuBar, QMenu, QAction, QSplitter, QFileDialog, \
     QInputDialog, QMessageBox, QShortcut, QSizePolicy, QListWidgetItem
@@ -378,7 +378,7 @@ class MainInterface(QMainWindow):
         :return: True if the user does not press cancel
         """
         if item:
-            path_to_entry = os.path.join(Utilities.get_entries_dir(), item.text())
+            path_to_entry = item.data(Qt.UserRole)
             if os.path.isfile(path_to_entry):
                 with open(path_to_entry, 'r', encoding="utf8") as entry:
                     if entry.read() != self.markdown_editor.toPlainText():
