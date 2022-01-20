@@ -4,7 +4,9 @@ Utility functions used by rest of program
 
 import json
 import os
+import shutil
 import sys
+from datetime import datetime
 from typing import List
 
 from PyQt5.QtWidgets import QMessageBox
@@ -151,7 +153,7 @@ def get_seperator() -> str:
     return get_data("entry_seperator")
 
 
-def replace_chars_for_file(file_name: str) -> None:
+def replace_chars_for_file(file_name: str) -> str:
     """
     Replaces characters that should not be in a file name
     :param file_name: The string to replace characters in
@@ -161,11 +163,25 @@ def replace_chars_for_file(file_name: str) -> None:
         file_name = file_name.replace(char, "_")
     return file_name
 
-def attachment_reference(file_name: str):
+def attachment_reference(file_name: str) -> str:
     insert_text = "!" if os.path.splitext(file_name)[1].lower() in (".jpg", ".jpeg", ".png", ".gif") else ""
     insert_text += "[](../attachments/" + file_name + ")\n"
     return insert_text
 
+def copy_files_to_attachments(files: list[str]):
+    insert_text = ""
+    for file in files:
+        cur_datetime = datetime.now()
+        file_name = cur_datetime.strftime(get_datetime_format()) + "_" + os.path.basename(file)
+        file_name = replace_chars_for_file(file_name)
+        shutil.copy2(file, os.path.join(get_attachments_dir(), file_name))
+        insert_text += attachment_reference(file_name)
+
+        # deletes the original file if it was in the attachments folder
+        if os.path.abspath(os.path.dirname(file)) == os.path.abspath(get_attachments_dir()):
+            os.remove(file)
+
+    return insert_text
 
 def alert_user(text: str) -> None:
     """

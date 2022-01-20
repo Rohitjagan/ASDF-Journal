@@ -102,8 +102,8 @@ class MarkdownEditor(QTextEdit):
 
     def insertFromMimeData(self, source: QMimeData) -> None:
         """
-        Overrides insertFromMimeData to allow for pasting images. Saves copied image to attachments directory and then
-        inserts the markdown reference.
+        Overrides insertFromMimeData to allow for pasting images and files. Copied images or files are saved to the
+        attachments directory and the markdown references are inserted.
         :param source: Data being pasted
         :return: None
         """
@@ -117,8 +117,12 @@ class MarkdownEditor(QTextEdit):
                 file_name = Utilities.replace_chars_for_file(file_name)
                 image.save(os.path.join(Utilities.get_attachments_dir(), file_name))
                 self.insertPlainText(Utilities.attachment_reference(file_name))
-                return
-        super(MarkdownEditor, self).insertFromMimeData(source)
+        elif source.hasUrls():
+            urls = source.urls()
+            urls = [url.toLocalFile() for url in urls if url.isLocalFile()]
+            self.insertPlainText(Utilities.copy_files_to_attachments(urls))
+        else:
+            super(MarkdownEditor, self).insertFromMimeData(source)
         
         
     def keyPressEvent(self, e: QKeyEvent) -> None:

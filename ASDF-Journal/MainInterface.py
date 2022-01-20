@@ -269,17 +269,8 @@ class MainInterface(QMainWindow):
         """
         selected_files = QFileDialog.getOpenFileNames(self, "Select attachments to import", Utilities.get_journal_dir())
         if selected_files:
-            for selected_file in selected_files[0]:
-                cur_datetime = datetime.now()
-                file_name = cur_datetime.strftime(Utilities.get_datetime_format()) + "_" + os.path.basename(
-                    selected_file)
-                file_name = Utilities.replace_chars_for_file(file_name)
-                shutil.copy2(selected_file, os.path.join(Utilities.get_attachments_dir(), file_name))
-                self.markdown_editor.insertPlainText(Utilities.attachment_reference(file_name))
+            self.markdown_editor.insertPlainText(Utilities.copy_files_to_attachments(selected_files[0]))
 
-                # deletes the original file if it was in the attachments folder
-                if os.path.abspath(os.path.dirname(selected_file)) == os.path.abspath(Utilities.get_attachments_dir()):
-                    os.remove(selected_file)
 
     def add_existing_attachments(self) -> None:
         """
