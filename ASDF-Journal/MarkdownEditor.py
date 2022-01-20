@@ -3,11 +3,13 @@ Editor for the markdown formatted entries
 """
 
 import os
+from datetime import datetime
 from typing import List
 
-from PyQt5.QtCore import Qt, QRegularExpression, pyqtSignal
-from PyQt5.QtGui import QTextCursor, QFont, QSyntaxHighlighter, QTextDocument, QTextCharFormat, QKeyEvent, QKeySequence
-from PyQt5.QtWidgets import QTextEdit, QListWidgetItem, QShortcut
+from PyQt5.QtCore import Qt, QRegularExpression, pyqtSignal, QMimeData
+from PyQt5.QtGui import QTextCursor, QFont, QSyntaxHighlighter, QTextDocument, QTextCharFormat, QKeyEvent, QKeySequence, \
+    QImage
+from PyQt5.QtWidgets import QTextEdit, QListWidgetItem, QShortcut, QInputDialog
 
 import Utilities
 
@@ -98,7 +100,27 @@ class MarkdownEditor(QTextEdit):
         cursor1.setKeepPositionOnInsert(False)
         self.setTextCursor(cursor1)
 
+    def insertFromMimeData(self, source: QMimeData) -> None:
+        """
+        Overrides insertFromMimeData to allow for pasting images. Saves copied image to attachments directory and then
+        inserts the markdown reference.
+        :param source: Data being pasted
+        :return: None
+        """
 
+        if source.hasImage():
+            image = QImage(source.imageData())
+            image_name, confirm = QInputDialog.getText(self, "Insert Image", "Image Name (Optional):")
+            if confirm:
+                cur_datetime = datetime.now()
+                file_name = cur_datetime.strftime(Utilities.get_datetime_format()) + "_" + image_name + ".png"
+                file_name = Utilities.replace_chars_for_file(file_name)
+                image.save(os.path.join(Utilities.get_attachments_dir(), file_name))
+                self.insertPlainText(Utilities.attachment_reference(file_name))
+                return
+        super(MarkdownEditor, self).insertFromMimeData(source)
+        
+        
     def keyPressEvent(self, e: QKeyEvent) -> None:
         """
         Overrides keyPressEvent in order to insert new list elements and allow indenting lists with tab

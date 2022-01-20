@@ -252,7 +252,7 @@ class MainInterface(QMainWindow):
         cur_datetime = datetime.now()
         entry_name = cur_datetime.strftime(Utilities.get_datetime_format())
 
-        title, confirm = QInputDialog.getText(self, "New Entry", "Entry Title (or leave blank):")
+        title, confirm = QInputDialog.getText(self, "New Entry", "Entry Title (Optional):")
         if confirm:
             if title:
                 entry_name += " " + title
@@ -275,9 +275,7 @@ class MainInterface(QMainWindow):
                     selected_file)
                 file_name = Utilities.replace_chars_for_file(file_name)
                 shutil.copy2(selected_file, os.path.join(Utilities.get_attachments_dir(), file_name))
-                insert_text = "!" if os.path.splitext(file_name)[1].lower() in (".jpg", ".jpeg", ".png", ".gif") else ""
-                insert_text += "[](../attachments/" + file_name + ") "
-                self.markdown_editor.insertPlainText(insert_text)
+                self.markdown_editor.insertPlainText(Utilities.attachment_reference(file_name))
 
                 # deletes the original file if it was in the attachments folder
                 if os.path.abspath(os.path.dirname(selected_file)) == os.path.abspath(Utilities.get_attachments_dir()):
@@ -292,9 +290,7 @@ class MainInterface(QMainWindow):
         if selected_files:
             for selected_file in selected_files[0]:
                 file_name = os.path.basename(str(selected_file))
-                insert_text = "!" if os.path.splitext(file_name)[1].lower() in (".jpg", ".jpeg", ".png", ".gif") else ""
-                insert_text += "[](../attachments/" + file_name + ") "
-                self.markdown_editor.insertPlainText(insert_text)
+                self.markdown_editor.insertPlainText(Utilities.attachment_reference(file_name))
 
     def exit_interface(self) -> None:
         self.close()

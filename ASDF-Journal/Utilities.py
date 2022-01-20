@@ -161,6 +161,11 @@ def replace_chars_for_file(file_name: str) -> None:
         file_name = file_name.replace(char, "_")
     return file_name
 
+def attachment_reference(file_name: str):
+    insert_text = "!" if os.path.splitext(file_name)[1].lower() in (".jpg", ".jpeg", ".png", ".gif") else ""
+    insert_text += "[](../attachments/" + file_name + ")\n"
+    return insert_text
+
 
 def alert_user(text: str) -> None:
     """
